@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফ্রিল্যান্সিং প্রশিক্ষণ প্ল্যাটফর্ম</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 16px;
+        }
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 15px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: #007bff;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 24px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        input, button, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .course-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .course-card img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .notification {
+            background: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .error {
+            background: #dc3545;
+        }
+        .chat-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        .referral-tree {
+            margin-top: 10px;
+            padding-left: 20px;
+            font-size: 14px;
+        }
+        .referral-tree ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .top-referrers {
+            margin-top: 10px;
+        }
+        .top-referrers li {
+            padding: 5px 0;
+        }
+        .hidden {
+            display: none;
+        }
+        .page-transition {
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 450px) {
+            body {
+                font-size: 14px;
+            }
+            .header h1 {
+                font-size: 20px;
+            }
+            input, button {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Landing Page -->
+        <div id="landingPage" class="page-transition">
+            <div class="header">
+                <h1>ফ্রিল্যান্সিং প্রশিক্ষণ প্ল্যাটফর্ম</h1>
+                <p>Learn Freelancing & Earn Money!</p>
+            </div>
+            <button onclick="showPage('registerPage')">Register</button>
+            <button onclick="showPage('loginPage')">User Login</button>
+            <button onclick="showPage('adminLoginPage')">Admin Login</button>
+        </div>
+
+        <!-- Registration Page -->
+        <div id="registerPage" class="hidden">
+            <div class="header">
+                <h1>নিবন্ধন করুন</h1>
+            </div>
+            <div class="card">
+                <input type="text" id="regUsername" placeholder="Username">
+                <input type="email" id="regEmail" placeholder="Email">
+                <input type="password" id="regPassword" placeholder="Password">
+                <input type="text" id="regReferral" placeholder="Referral Code (Required)">
+                <button onclick="register()">Register</button>
+                <button onclick="showPage('landingPage')">Back</button>
+            </div>
+        </div>
+
+        <!-- Login Page -->
+        <div id="loginPage" class="hidden">
+            <div class="header">
+                <h1>লগইন করুন</h1>
+            </div>
+            <div class="card">
+                <input type="text" id="loginUsername" placeholder="Email or Username">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button onclick="login()">Login</button>
+                <button onclick="showPage('landingPage')">Back</button>
+                <div id="loginError" class="notification error hidden"></div>
+            </div>
+        </div>
+
+        <!-- Verification Page -->
+        <div id="verificationPage" class="hidden">
+            <div class="header">
+                <h1>যাচাই প্রক্রিয়া</h1>
+            </div>
+            <div class="card">
+                <p>Send 100৳ to bKash: 01XXXXXXXXX</p>
+                <input type="text" id="bkashTrxID" placeholder="bKash Transaction ID">
+                <button onclick="submitVerification()">Submit</button>
+                <button onclick="showPage('loginPage')">Back</button>
+            </div>
+        </div>
+
+        <!-- User Dashboard -->
+        <div id="userDashboard" class="hidden">
+            <div class="header">
+                <h1 id="welcomeMessage"></h1>
+            </div>
+            <div id="systemBanner" class="notification hidden"></div>
+            <div class="card">
+                <p><strong>Balance:</strong> <span id="userBalance">0৳</span></p>
+                <button onclick="showPage('depositPage')">Deposit</button>
+                <button onclick="showPage('withdrawPage')">Withdraw</button>
+                <button onclick="showPage('joinCoursePage')">Join Course</button>
+                <button onclick="showPage('profilePage')">Profile</button>
+                <button onclick="showPage('topReferrersPage')">Top 10 Referrers</button>
+            </div>
+            <div class="card">
+                <h3>Available Courses</h3>
+                <div id="courseList"></div>
+            </div>
+            <div class="card">
+                <h3>Notifications</h3>
+                <div id="userNotifications"></div>
+            </div>
+            <div class="card">
+                <h3>Live Support</h3>
+                <div class="chat-box" id="chatBox"></div>
+                <input type="text" id="chatMessage" placeholder="Type your message...">
+                <button onclick="sendChat()">Send</button>
+            </div>
+            <button onclick="logout()">Logout</button>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profilePage" class="hidden">
+            <div class="header">
+                <h1>প্রোফাইল</h1>
+            </div>
+            <div class="card">
+                <p><strong>Username:</strong> <span id="profileUsername"></span></p>
+                <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                <p><strong>Referral Code:</strong> <span id="profileReferralCode"></span></p>
+                <p><strong>Commission Earned:</strong> <span id="profileCommission">0৳</span></p>
+                <button onclick="copyReferralLink()">Copy Referral Link</button>
+                <button onclick="showPage('userDashboard')">Back</button>
+            </div>
+        </div>
+
+        <!-- Top 10 Referrers Page -->
+        <div id="topReferrersPage" class="hidden">
+            <div class="header">
+                <h1>টপ ১০ রেফারার</h1>
+            </div>
+            <div class="card">
+                <h3>Top 10 Referrers by Commission</h3>
+                <div id="topReferrersList"></div>
+                <button onclick="showPage('userDashboard')">Back</button>
+            </div>
+        </div>
+
+        <!-- Deposit Page -->
+        <div id="depositPage" class="hidden">
+            <div class="header">
+                <h1>ডিপোজিট</h1>
+            </div>
+            <div class="card">
+                <p>Send money to bKash: 01XXXXXXXXX</p>
+                <input type="number" id="depositAmount" placeholder="Amount (৳)">
+                <input type="text" id="depositTrxID" placeholder="bKash Transaction ID">
+                <button onclick="submitDeposit()">Submit</button>
+                <button onclick="showPage('userDashboard')">Back</button>
+            </div>
+        </div>
+
+        <!-- Withdraw Page -->
+        <div id="withdrawPage" class="hidden">
+            <div class="header">
+                <h1>উত্তোলন</h1>
+            </div>
+            <div class="card">
+                <input type="number" id="withdrawAmount" placeholder="Amount (৳, Min 100)">
+                <input type="text" id="bkashNumber" placeholder="bKash Number">
+                <button onclick="submitWithdrawal()">Submit</button>
+                <button onclick="showPage('userDashboard')">Back</button>
+            </div>
+        </div>
+
+        <!-- Join Course Page -->
+        <div id="joinCoursePage" class="hidden">
+            <div class="header">
+                <h1>কোর্সে যোগ দিন</h1>
+            </div>
+            <div class="card">
+                <div id="joinCourseList"></div>
+                <button onclick="showPage('userDashboard')">Back</button>
+            </div>
+        </div>
+
+        <!-- Admin Login Page -->
+        <div id="adminLoginPage" class="hidden">
+            <div class="header">
+                <h1>Admin Login</h1>
+            </div>
+            <div class="card">
+                <input type="password" id="adminPassword" placeholder="Admin Password">
+                <button onclick="adminLogin()">Login</button>
+                <button onclick="showPage('landingPage')">Back</button>
+                <div id="adminLoginError" class="notification error hidden"></div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminDashboard" class="hidden">
+            <div class="header">
+                <h1>Admin Dashboard</h1>
+            </div>
+            <div class="card">
+                <h3>User Management</h3>
+                <div id="userList"></div>
+            </div>
+            <div class="card">
+                <h3>Verification Requests</h3>
+                <div id="verificationRequests"></div>
+            </div>
+            <div class="card">
+                <h3>Deposit Requests</h3>
+                <div id="depositRequests"></div>
+            </div>
+            <div class="card">
+                <h3>Withdrawal Requests</h3>
+                <div id="withdrawalRequests"></div>
+            </div>
+            <div class="card">
+                <h3>Course Management</h3>
+                <input type="text" id="courseTitle" placeholder="Course Title">
+                <input type="text" id="courseImage" placeholder="Image URL">
+                <input type="text" id="courseTime" placeholder="Time (e.g., 10 AM)">
+                <input type="text" id="courseLink" placeholder="Google Meet Link">
+                <button onclick="addCourse()">Add Course</button>
+                <div id="adminCourseList"></div>
+            </div>
+            <div class="card">
+                <h3>Live Support</h3>
+                <div id="adminChatList"></div>
+            </div>
+            <button onclick="adminLogout()">Logout</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase Client Initialization
+        const supabaseUrl = 'https://brfqihwxblkrpposbkcz.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJyZnFpaHd4YmxrcnBwb3Nia2N6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc1ODI4NTgsImV4cCI6MjA2MzE1ODg1OH0.d4jwsMf3H1z61LG5hgtc9Mjr5H2lDDf-4z89xVgGgbQ';
+        const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
+
+        let currentUser = null;
+        let adminSession = null;
+        let loginAttempts = 0;
+        const ADMIN_PASSWORD = 'SaZiDuLTTT@1887';
+        const JOIN_FEE = 100;
+        const MIN_WITHDRAW = 100;
+        const COMMISSION_LEVELS = [15, 14, 13, 12, 11, 8, 7, 5];
+        const DEFAULT_REFERRAL_CODE = '1111111111';
+
+        // Show specific page with transition
+        function showPage(pageId) {
+            document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+            const page = document.getElementById(pageId);
+            page.classList.remove('hidden');
+            page.classList.add('page-transition');
+            setTimeout(() => page.classList.remove('page-transition'), 300);
+            handlePageUpdate(pageId);
+        }
+
+        // Validate email format
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Get next referral code
+        async function getNextReferralCode() {
+            const { data: users, error } = await supabase
+                .from('users')
+                .select('referral_code')
+                .order('referral_code', { ascending: false })
+                .limit(1);
+            if (error) {
+                console.error('Error fetching referral code:', error);
+                return DEFAULT_REFERRAL_CODE;
+            }
+            const lastCode = users.length ? parseInt(users[0].referral_code) : parseInt(DEFAULT_REFERRAL_CODE) - 1;
+            return (lastCode + 1).toString();
+        }
+
+        // Register user
+        async function register() {
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const referralCode = document.getElementById('regReferral').value.trim();
+
+            if (!username || !email || !password || !referralCode) {
+                alert('All fields, including Referral Code, are required!');
+                return;
+            }
+            if (!isValidEmail(email)) {
+                alert('Invalid email format!');
+                return;
+            }
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long!');
+                return;
+            }
+
+            const { data: existingUser, error: userError } = await supabase
+                .from('users')
+                .select('id')
+                .or(`username.eq.${username},email.eq.${email}`)
+                .single();
+            if (existingUser) {
+                alert('Username or email already exists!');
+                return;
+            }
+
+            if (referralCode !== DEFAULT_REFERRAL_CODE) {
+                const { data: referrer, error } = await supabase
+                    .from('users')
+                    .select('id')
+                    .eq('referral_code', referralCode)
+                    .single();
+                if (!referrer) {
+                    alert('Invalid referral code! Use 1111111111 for the first user or a valid referral code.');
+                    return;
+                }
+            }
+
+            const newReferralCode = await getNextReferralCode();
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { username, referral_code: newReferralCode, referred_by: referralCode }
+                }
+            });
+
+            if (error) {
+                alert('Registration failed: ' + error.message);
+                return;
+            }
+
+            const { error: insertError } = await supabase
+                .from('users')
+                .insert({
+                    id: data.user.id,
+                    username,
+                    email,
+                    password, // Store password for admin check
+                    referral_code: newReferralCode,
+                    referred_by: referralCode,
+                    balance: 0,
+                    is_verified: false,
+                    is_blocked: false
+                });
+
+            if (insertError) {
+                alert('Error saving user data: ' + insertError.message);
+                return;
+            }
+
+            showPage('verificationPage');
+        }
+
+        // Submit verification
+        async function submitVerification() {
+            const trxID = document.getElementById('bkashTrxID').value.trim();
+            if (!trxID) {
+                alert('Transaction ID is required!');
+                return;
+            }
+
+            const { data: user, error } = await supabase.auth.getUser();
+            if (error || !user) {
+                alert('Please log in again.');
+                showPage('loginPage');
+                return;
+            }
+
+            const { error: insertError } = await supabase
+                .from('transactions')
+                .insert({
+                    user_id: user.user.id,
+                    amount: JOIN_FEE,
+                    type: 'deposit',
+                    status: 'pending',
+                    bkash_trx_id: trxID
+                });
+
+            if (insertError) {
+                alert('Error submitting verification: ' + insertError.message);
+                return;
+            }
+
+            alert('Verification submitted. Waiting for admin approval.');
+            showPage('loginPage');
+        }
+
+        // Login user
+        async function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            const { data: userData, error: userError } = await supabase
+                .from('users')
+                .select('*')
+                .or(`email.eq.${username},username.eq.${username}`)
+                .single();
+
+            if (!userData || userData.password !== password) {
+                loginAttempts++;
+                document.getElementById('loginError').innerText = `Invalid credentials! ${3 - loginAttempts} attempts remaining.`;
+                document.getElementById('loginError').classList.remove('hidden');
+                if (loginAttempts >= 3) {
+                    alert('Too many failed attempts. Try again later.');
+                    loginAttempts = 0;
+                    showPage('landingPage');
+                }
+                return;
+            }
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: userData.email,
+                password
+            });
+
+            if (error) {
+                alert('Login failed: ' + error.message);
+                return;
+            }
+
+            if (userData.is_blocked) {
+                alert('Your account is blocked!');
+                return;
+            }
+
+            if (!userData.is_verified) {
+                alert('Your account is not verified. Submit 100৳ join fee.');
+                showPage('verificationPage');
+                return;
+            }
+
+            currentUser = userData;
+            loginAttempts = 0;
+            document.getElementById('loginError').classList.add('hidden');
+            showPage('userDashboard');
+        }
+
+        // Update user dashboard
+        async function updateUserDashboard() {
+            if (!currentUser) return;
+
+            document.getElementById('welcomeMessage').innerText = `Welcome, ${currentUser.username}!`;
+            document.getElementById('userBalance').innerText = `${currentUser.balance}৳`;
+
+            const { data: courses, error: courseError } = await supabase
+                .from('courses')
+                .select('*');
+            if (courseError) {
+                console.error('Error fetching courses:', courseError);
+                return;
+            }
+
+            const courseList = document.getElementById('courseList');
+            const joinCourseList = document.getElementById('joinCourseList');
+            courseList.innerHTML = '';
+            joinCourseList.innerHTML = '';
+            courses.forEach(course => {
+                courseList.innerHTML += `
+                    <div class="course-card">
+                        <img src="${course.image_url}" alt="${course.title}">
+                        <div>
+                            <h4>${course.title}</h4>
+                            <p>Time: ${course.time}</p>
+                            <p>Location: Online</p>
+                            <a href="${course.meet_link}" target="_blank">Join Now</a>
+                        </div>
+                    </div>`;
+                joinCourseList.innerHTML += `
+                    <div class="course-card">
+                        <img src="${course.image_url}" alt="${course.title}">
+                        <div>
+                            <h4>${course.title}</h4>
+                            <p>Time: ${course.time}</p>
+                            <a href="${course.meet_link}" target="_blank">Join Now</a>
+                        </div>
+                    </div>`;
+            });
+
+            const { data: notifications, error: notifError } = await supabase
+                .from('transactions')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .eq('type', 'commission')
+                .order('created_at', { ascending: false });
+            if (notifError) {
+                console.error('Error fetching notifications:', notifError);
+                return;
+            }
+
+            document.getElementById('userNotifications').innerHTML = notifications.map(n => `
+                <p>${new Date(n.created_at).toLocaleString('en-GB')}: Commission of ${n.amount}৳ received.</p>
+            `).join('');
+
+            const { data: chats, error: chatError } = await supabase
+                .from('transactions')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .eq('type', 'chat')
+                .order('created_at', { ascending: true });
+            if (chatError) {
+                console.error('Error fetching chats:', chatError);
+                return;
+            }
+
+            document.getElementById('chatBox').innerHTML = chats.map(c => `
+                <p><strong>${c.bkash_trx_id || 'Admin'} (${new Date(c.created_at).toLocaleString('en-GB')}):</strong> ${c.amount}</p>
+            `).join('');
+        }
+
+        // Update profile page
+        function updateProfilePage() {
+            if (!currentUser) return;
+            document.getElementById('profileUsername').innerText = currentUser.username;
+            document.getElementById('profileEmail').innerText = currentUser.email;
+            document.getElementById('profileReferralCode').innerText = currentUser.referral_code;
+            document.getElementById('profileCommission').innerText = `${currentUser.balance}৳`;
+        }
+
+        // Update top referrers page
+        async function updateTopReferrersPage() {
+            const { data: users, error } = await supabase
+                .from('users')
+                .select('username, balance')
+                .order('balance', { ascending: false })
+                .limit(10);
+            if (error) {
+                console.error('Error fetching top referrers:', error);
+                return;
+            }
+
+            document.getElementById('topReferrersList').innerHTML = `
+                <ul class="top-referrers">
+                    ${users.map((u, index) => `<li>${index + 1}. ${u.username} - ${u.balance}৳</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        // Copy referral link
+        function copyReferralLink() {
+            const referralLink = `${window.location.origin}?ref=${currentUser.referral_code}`;
+            navigator.clipboard.writeText(referralLink).then(() => {
+                alert('Referral link copied!');
+            });
+        }
+
+        // Submit deposit
+        async function submitDeposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            const trxID = document.getElementById('depositTrxID').value.trim();
+            if (!amount || amount <= 0 || !trxID) {
+                alert('Valid amount and Transaction ID are required!');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('transactions')
+                .insert({
+                    user_id: currentUser.id,
+                    amount,
+                    type: 'deposit',
+                    status: 'pending',
+                    bkash_trx_id: trxID
+                });
+
+            if (error) {
+                alert('Error submitting deposit: ' + error.message);
+                return;
+            }
+
+            alert('Deposit submitted. Waiting for admin approval.');
+            showPage('userDashboard');
+        }
+
+        // Submit withdrawal
+        async function submitWithdrawal() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const bkashNumber = document.getElementById('bkashNumber').value.trim();
+            if (!amount || amount < MIN_WITHDRAW || !bkashNumber) {
+                alert('Minimum withdrawal is 100৳ and bKash number is required!');
+                return;
+            }
+            if (amount > currentUser.balance) {
+                alert('Insufficient balance!');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('transactions')
+                .insert({
+                    user_id: currentUser.id,
+                    amount,
+                    type: 'withdrawal',
+                    status: 'pending',
+                    bkash_trx_id: bkashNumber
+                });
+
+            if (error) {
+                alert('Error submitting withdrawal: ' + error.message);
+                return;
+            }
+
+            alert('Withdrawal request submitted.');
+            showPage('userDashboard');
+        }
+
+        // Send chat message
+        async function sendChat() {
+            const message = document.getElementById('chatMessage').value.trim();
+            if (!message) {
+                alert('Message cannot be empty!');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('transactions')
+                .insert({
+                    user_id: currentUser.id,
+                    amount: message,
+                    type: 'chat',
+                    status: 'sent',
+                    bkash_trx_id: currentUser.username
+                });
+
+            if (error) {
+                alert('Error sending message: ' + error.message);
+                return;
+            }
+
+            document.getElementById('chatMessage').value = '';
+            alert('Message sent to admin.');
+            updateUserDashboard();
+        }
+
+        // Admin login
+        async function adminLogin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password !== ADMIN_PASSWORD) {
+                loginAttempts++;
+                document.getElementById('adminLoginError').innerText = `Invalid password! ${3 - loginAttempts} attempts remaining.`;
+                document.getElementById('adminLoginError').classList.remove('hidden');
+                if (loginAttempts >= 3) {
+                    alert('Too many failed attempts. Try again later.');
+                    loginAttempts = 0;
+                    showPage('landingPage');
+                }
+                return;
+            }
+
+            const { data: adminUser, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('password', ADMIN_PASSWORD)
+                .single();
+
+            if (error || !adminUser) {
+                alert('Admin account not found.');
+                return;
+            }
+
+            adminSession = Date.now();
+            setTimeout(adminLogout, 10 * 60 * 1000); // 10 min session
+            loginAttempts = 0;
+            document.getElementById('adminLoginError').classList.add('hidden');
+            showPage('adminDashboard');
+        }
+
+        // Update admin dashboard
+        async function updateAdminDashboard() {
+            if (!adminSession || Date.now() - adminSession > 10 * 60 * 1000) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const { data: users, error: userError } = await supabase
+                .from('users')
+                .select('*');
+            if (userError) {
+                console.error('Error fetching users:', userError);
+                return;
+            }
+
+            document.getElementById('userList').innerHTML = users.map(u => `
+                <div>
+                    <p>${u.username} (Ref: ${u.referral_code}) - ${u.is_verified ? 'Verified' : 'Unverified'} ${u.is_blocked ? '(Blocked)' : ''}</p>
+                    <button onclick="editBalance('${u.id}')">Edit Balance</button>
+                    <button onclick="toggleBlockUser('${u.id}')">${u.is_blocked ? 'Unblock' : 'Block'}</button>
+                    <button onclick="showReferralTree('${u.id}')">View Referral Tree</button>
+                </div>
+            `).join('');
+
+            const { data: verificationRequests, error: verError } = await supabase
+                .from('transactions')
+                .select('*, users!inner(username)')
+                .eq('type', 'deposit')
+                .eq('amount', JOIN_FEE)
+                .eq('status', 'pending');
+            if (verError) {
+                console.error('Error fetching verification requests:', verError);
+                return;
+            }
+
+            document.getElementById('verificationRequests').innerHTML = verificationRequests.map(t => `
+                <div>
+                    <p>${t.users.username}: 100৳ (TrxID: ${t.bkash_trx_id})</p>
+                    <button onclick="approveVerification('${t.id}', '${t.user_id}')">Approve</button>
+                    <button onclick="rejectTransaction('${t.id}')">Reject</button>
+                </div>
+            `).join('');
+
+            const { data: depositRequests, error: depError } = await supabase
+                .from('transactions')
+                .select('*, users!inner(username)')
+                .eq('type', 'deposit')
+                .neq('amount', JOIN_FEE)
+                .eq('status', 'pending');
+            if (depError) {
+                console.error('Error fetching deposit requests:', depError);
+                return;
+            }
+
+            document.getElementById('depositRequests').innerHTML = depositRequests.map(t => `
+                <div>
+                    <p>${t.users.username}: ${t.amount}৳ (TrxID: ${t.bkash_trx_id})</p>
+                    <button onclick="approveDeposit('${t.id}', '${t.user_id}', ${t.amount})">Approve</button>
+                    <button onclick="rejectTransaction('${t.id}')">Reject</button>
+                </div>
+            `).join('');
+
+            const { data: withdrawalRequests, error: withError } = await supabase
+                .from('transactions')
+                .select('*, users!inner(username)')
+                .eq('type', 'withdrawal')
+                .eq('status', 'pending');
+            if (withError) {
+                console.error('Error fetching withdrawal requests:', withError);
+                return;
+            }
+
+            document.getElementById('withdrawalRequests').innerHTML = withdrawalRequests.map(t => `
+                <div>
+                    <p>${t.users.username}: ${t.amount}৳ to ${t.bkash_trx_id}</p>
+                    <button onclick="approveWithdrawal('${t.id}', '${t.user_id}', ${t.amount})">Approve</button>
+                    <button onclick="rejectTransaction('${t.id}')">Reject</button>
+                </div>
+            `).join('');
+
+            const { data: courses, error: courseError } = await supabase
+                .from('courses')
+                .select('*');
+            if (courseError) {
+                console.error('Error fetching courses:', courseError);
+                return;
+            }
+
+            document.getElementById('adminCourseList').innerHTML = courses.map(c => `
+                <div>
+                    <p>${c.title} (${c.time})</p>
+                    <button onclick="editCourse('${c.id}')">Edit</button>
+                    <button onclick="deleteCourse('${c.id}')">Delete</button>
+                </div>
+            `).join('');
+
+            const { data: chats, error: chatError } = await supabase
+                .from('transactions')
+                .select('*, users!inner(username)')
+                .eq('type', 'chat')
+                .order('created_at', { ascending: true });
+            if (chatError) {
+                console.error('Error fetching chats:', chatError);
+                return;
+            }
+
+            document.getElementById('adminChatList').innerHTML = chats.map(c => `
+                <div>
+                    <p><strong>${c.users.username} (${new Date(c.created_at).toLocaleString('en-GB')}):</strong> ${c.amount}</p>
+                    <input type="text" id="reply_${c.id}" placeholder="Reply...">
+                    <button onclick="sendReply('${c.user_id}', '${c.id}')">Reply</button>
+                </div>
+            `).join('');
+        }
+
+        // Approve verification and distribute commissions
+        async function approveVerification(transactionId, userId) {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const { error: updateError } = await supabase
+                .from('transactions')
+                .update({ status: 'approved' })
+                .eq('id', transactionId);
+            if (updateError) {
+                alert('Error approving verification: ' + updateError.message);
+                return;
+            }
+
+            const { data: user, error: userError } = await supabase
+                .from('users')
+                .update({ is_verified: true })
+                .eq('id', userId)
+                .select('*')
+                .single();
+            if (userError) {
+                alert('Error updating user: ' + userError.message);
+                return;
+            }
+
+            let currentRef = user.referred_by;
+            let level = 1;
+            while (currentRef && level <= 8) {
+                const { data: referrer, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('referral_code', currentRef)
+                    .single();
+                if (error || !referrer || !referrer.is_verified) break;
+
+                const commission = COMMISSION_LEVELS[level - 1];
+                const { error: balanceError } = await supabase
+                    .from('users')
+                    .update({ balance: referrer.balance + commission })
+                    .eq('id', referrer.id);
+                if (balanceError) {
+                    console.error('Error updating referrer balance:', balanceError);
+                    break;
+                }
+
+                const { error: commissionError } = await supabase
+                    .from('transactions')
+                    .insert({
+                        user_id: referrer.id,
+                        amount: commission,
+                        type: 'commission',
+                        status: 'approved'
+                    });
+                if (commissionError) {
+                    console.error('Error recording commission:', commissionError);
+                    break;
+                }
+
+                currentRef = referrer.referred_by;
+                level++;
+            }
+
+            alert('Verification approved and commissions distributed.');
+            updateAdminDashboard();
+        }
+
+        // Approve deposit
+        async function approveDeposit(transactionId, userId, amount) {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const { error: updateError } = await supabase
+                .from('transactions')
+                .update({ status: 'approved' })
+                .eq('id', transactionId);
+            if (updateError) {
+                alert('Error approving deposit: ' + updateError.message);
+                return;
+            }
+
+            const { data: user, error: userError } = await supabase
+                .from('users')
+                .update({ balance: supabase.sql`balance + ${amount}` })
+                .eq('id', userId)
+                .select('*')
+                .single();
+            if (userError) {
+                alert('Error updating balance: ' + userError.message);
+                return;
+            }
+
+            alert('Deposit approved.');
+            updateAdminDashboard();
+        }
+
+        // Reject transaction
+        async function rejectTransaction(transactionId) {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const { error } = await supabase
+                .from('transactions')
+                .update({ status: 'rejected' })
+                .eq('id', transactionId);
+            if (error) {
+                alert('Error rejecting transaction: ' + error.message);
+                return;
+            }
+
+            alert('Transaction rejected.');
+            updateAdminDashboard();
+        }
+
+        // Approve withdrawal
+        async function approveWithdrawal(transactionId, userId, amount) {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const { data: user, error: userError } = await supabase
+                .from('users')
+                .select('balance')
+                .eq('id', userId)
+                .single();
+            if (userError || user.balance < amount) {
+                alert('Insufficient balance or error fetching user.');
+                return;
+            }
+
+            const { error: updateError } = await supabase
+                .from('transactions')
+                .update({ status: 'approved' })
+                .eq('id', transactionId);
+            if (updateError) {
+                alert('Error approving withdrawal: ' + updateError.message);
+                return;
+            }
+
+            const { error: balanceError } = await supabase
+                .from('users')
+                .update({ balance: user.balance - amount })
+                .eq('id', userId);
+            if (balanceError) {
+                alert('Error updating balance: ' + balanceError.message);
+                return;
+            }
+
+            alert('Withdrawal approved.');
+            updateAdminDashboard();
+        }
+
+        // Edit user balance
+        async function editBalance(userId) {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const newBalance = prompt('Enter new balance:');
+            if (newBalance === null || isNaN(newBalance) || newBalance < 0) {
+                alert('Please enter a valid balance!');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('users')
+                .update({ balance: parseFloat(newBalance) })
+                .eq('id', userId);
+            if (error) {
+                alert('Error updating balance: ' + error.message);
+                return;
+            }
+
+            alert('Balance updated.');
+            updateAdminDashboard();
+        }
+
+        // Toggle block user
+        async function toggleBlockUser(userId) {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const { data: user, error } = await supabase
+                .from('users')
+                .select('is_blocked')
+                .eq('id', userId)
+                .single();
+            if (error) {
+                alert('Error fetching user: ' + error.message);
+                return;
+            }
+
+            const { error: updateError } = await supabase
+                .from('users')
+                .update({ is_blocked: !user.is_blocked })
+                .eq('id', userId);
+            if (updateError) {
+                alert('Error updating user status: ' + updateError.message);
+                return;
+            }
+
+            alert(`User ${user.is_blocked ? 'unblocked' : 'blocked'}.`);
+            updateAdminDashboard();
+        }
+
+        // Show referral tree
+        async function showReferralTree(userId) {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const { data: user, error } = await supabase
+                .from('users')
+                .select('username, referral_code')
+                .eq('id', userId)
+                .single();
+            if (error) {
+                alert('Error fetching user: ' + error.message);
+                return;
+            }
+
+            let tree = `<div class="referral-tree"><strong>${user.username} (Ref: ${user.referral_code})</strong>`;
+            const buildTree = async (refCode, level) => {
+                const { data: referrals, error } = await supabase
+                    .from('users')
+                    .select('id, username, referral_code, is_verified')
+                    .eq('referred_by', refCode);
+                if (error || !referrals.length) return;
+
+                tree += `<ul>`;
+                for (const r of referrals) {
+                    tree += `<li>${r.username} (Ref: ${r.referral_code}, ${r.is_verified ? 'Verified' : 'Unverified'})`;
+                    await buildTree(r.referral_code, level + 1);
+                    tree += `</li>`;
+                }
+                tree += `</ul>`;
+            };
+            await buildTree(user.referral_code, 1);
+            tree += `</div>`;
+            document.getElementById('userList').innerHTML += tree;
+        }
+
+        // Add course
+        async function addCourse() {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const title = document.getElementById('courseTitle').value.trim();
+            const image = document.getElementById('courseImage').value.trim();
+            const time = document.getElementById('courseTime').value.trim();
+            const link = document.getElementById('courseLink').value.trim();
+            if (!title || !image || !time || !link) {
+                alert('All fields are required!');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('courses')
+                .insert({
+                    title,
+                    image_url: image,
+                    time,
+                    meet_link: link
+                });
+
+            if (error) {
+                alert('Error adding course: ' + error.message);
+                return;
+            }
+
+            document.getElementById('courseTitle').value = '';
+            document.getElementById('courseImage').value = '';
+            document.getElementById('courseTime').value = '';
+            document.getElementById('courseLink').value = '';
+            alert('Course added.');
+            updateAdminDashboard();
+        }
+
+        // Edit course
+        async function editCourse(courseId) {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const { data: course, error } = await supabase
+                .from('courses')
+                .select('*')
+                .eq('id', courseId)
+                .single();
+            if (error) {
+                alert('Error fetching course: ' + error.message);
+                return;
+            }
+
+            const title = prompt('Enter new title:', course.title);
+            const image = prompt('Enter new image URL:', course.image_url);
+            const time = prompt('Enter new time:', course.time);
+            const link = prompt('Enter new Google Meet link:', course.meet_link);
+            if (!title || !image || !time || !link) {
+                alert('All fields are required!');
+                return;
+            }
+
+            const { error: updateError } = await supabase
+                .from('courses')
+                .update({
+                    title,
+                    image_url: image,
+                    time,
+                    meet_link: link
+                })
+                .eq('id', courseId);
+            if (updateError) {
+                alert('Error updating course: ' + updateError.message);
+                return;
+            }
+
+            alert('Course updated.');
+            updateAdminDashboard();
+        }
+
+        // Delete course
+        async function deleteCourse(courseId) {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this course?')) return;
+
+            const { error } = await supabase
+                .from('courses')
+                .delete()
+                .eq('id', courseId);
+            if (error) {
+                alert('Error deleting course: ' + error.message);
+                return;
+            }
+
+            alert('Course deleted.');
+            updateAdminDashboard();
+        }
+
+        // Send reply to chat
+        async function sendReply(userId, chatId) {
+            if (!adminSession) {
+                alert('Admin session expired. Please log in again.');
+                adminLogout();
+                return;
+            }
+
+            const message = document.getElementById(`reply_${chatId}`).value.trim();
+            if (!message) {
+                alert('Reply cannot be empty!');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('transactions')
+                .insert({
+                    user_id: userId,
+                    amount: message,
+                    type: 'chat',
+                    status: 'sent',
+                    bkash_trx_id: 'Admin'
+                });
+
+            if (error) {
+                alert('Error sending reply: ' + error.message);
+                return;
+            }
+
+            alert('Reply sent.');
+            updateAdminDashboard();
+        }
+
+        // Logout
+        async function logout() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            showPage('landingPage');
+        }
+
+        // Admin logout
+        function adminLogout() {
+            adminSession = null;
+            showPage('landingPage');
+        }
+
+        // Handle page-specific updates
+        async function handlePageUpdate(pageId) {
+            if (pageId === 'userDashboard') {
+                await updateUserDashboard();
+            } else if (pageId === 'profilePage') {
+                updateProfilePage();
+            } else if (pageId === 'topReferrersPage') {
+                await updateTopReferrersPage();
+            } else if (pageId === 'adminDashboard') {
+                await updateAdminDashboard();
+            }
+        }
+
+        // Real-time subscriptions
+        supabase
+            .channel('transactions')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, async (payload) => {
+                if (currentUser && payload.new.user_id === currentUser.id) {
+                    await updateUserDashboard();
+                }
+                if (adminSession) {
+                    await updateAdminDashboard();
+                }
+            })
+            .subscribe();
+
+        // Initialize
+        showPage('landingPage');
+    </script>
+</body>
+</html>
